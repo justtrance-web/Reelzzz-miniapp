@@ -6,20 +6,7 @@
     <title>Reels Editor</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --bg: #0f0f1a;
-            --card: #1a1a2e;
-            --text: #ffffff;
-            --text-dim: rgba(255,255,255,0.5);
-            --accent: #5865f2;
-            --accent-glow: rgba(88,101,242,0.3);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         [data-theme="dark"] {
             --bg: #0f0f1a;
@@ -27,7 +14,6 @@
             --text: #ffffff;
             --text-dim: rgba(255,255,255,0.5);
             --accent: #5865f2;
-            --accent-glow: rgba(88,101,242,0.3);
         }
         
         [data-theme="light"] {
@@ -36,7 +22,6 @@
             --text: #1d1d1f;
             --text-dim: rgba(0,0,0,0.5);
             --accent: #007aff;
-            --accent-glow: rgba(0,122,255,0.2);
         }
         
         [data-theme="neon"] {
@@ -45,7 +30,6 @@
             --text: #00ffaa;
             --text-dim: rgba(0,255,170,0.5);
             --accent: #ff00aa;
-            --accent-glow: rgba(255,0,170,0.4);
         }
         
         body {
@@ -54,66 +38,71 @@
             color: var(--text);
             min-height: 100vh;
             padding: 16px;
-            padding-bottom: 100px;
-            transition: background 0.3s, color 0.3s;
+            padding-bottom: 120px;
+            transition: all 0.3s;
         }
         
         .theme-switcher {
             display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 12px;
             justify-content: center;
+            margin-bottom: 20px;
         }
         
         .theme-btn {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .theme-btn:active {
-            transform: scale(0.9);
-        }
-        
         .theme-btn.active {
             border-color: var(--accent);
-            box-shadow: 0 0 12px var(--accent-glow);
+            transform: scale(1.1);
         }
         
-        .theme-btn[data-set="dark"] {
-            background: linear-gradient(135deg, #1a1a2e, #5865f2);
-        }
-        
-        .theme-btn[data-set="light"] {
-            background: linear-gradient(135deg, #f5f5f7, #007aff);
-        }
-        
-        .theme-btn[data-set="neon"] {
-            background: linear-gradient(135deg, #00ffaa, #ff00aa);
-        }
+        .theme-btn[data-set="dark"] { background: linear-gradient(135deg, #1a1a2e, #5865f2); }
+        .theme-btn[data-set="light"] { background: linear-gradient(135deg, #f5f5f7, #007aff); }
+        .theme-btn[data-set="neon"] { background: linear-gradient(135deg, #00ffaa, #ff00aa); }
         
         .header {
             text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 { font-size: 26px; margin-bottom: 6px; }
+        .header p { font-size: 14px; color: var(--text-dim); }
+        
+        .instructions {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px 20px;
             margin-bottom: 24px;
         }
         
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 6px;
+        .instructions div {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
         }
         
-        .header p {
+        .step {
+            background: var(--accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
             font-size: 14px;
-            color: var(--text-dim);
         }
         
-        .section {
-            margin-bottom: 24px;
-        }
+        .section { margin-bottom: 24px; }
         
         .section-title {
             font-size: 12px;
@@ -121,6 +110,9 @@
             letter-spacing: 1.5px;
             color: var(--text-dim);
             margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .buttons-grid {
@@ -135,7 +127,7 @@
             border-radius: 14px;
             padding: 16px 8px;
             color: var(--text);
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -144,19 +136,15 @@
             transition: all 0.2s;
         }
         
-        .btn:active {
-            transform: scale(0.95);
-        }
+        .btn:active { transform: scale(0.95); }
         
         .btn.selected {
             border-color: var(--accent);
             background: var(--accent);
-            box-shadow: 0 4px 20px var(--accent-glow);
+            color: white;
         }
         
-        .btn-icon {
-            font-size: 24px;
-        }
+        .btn-icon { font-size: 24px; }
         
         .speed-control {
             background: var(--card);
@@ -177,23 +165,12 @@
             color: var(--accent);
         }
         
-        .speed-reset {
-            background: none;
-            border: 1px solid var(--text-dim);
-            color: var(--text-dim);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        
         .slider {
             -webkit-appearance: none;
             width: 100%;
             height: 8px;
             border-radius: 4px;
             background: var(--bg);
-            outline: none;
         }
         
         .slider::-webkit-slider-thumb {
@@ -202,8 +179,6 @@
             height: 28px;
             border-radius: 50%;
             background: var(--accent);
-            cursor: pointer;
-            box-shadow: 0 2px 10px var(--accent-glow);
         }
         
         .speed-labels {
@@ -214,20 +189,16 @@
             color: var(--text-dim);
         }
         
-        .selected-effects {
+        .selected-panel {
             background: var(--card);
             border-radius: 16px;
             padding: 16px;
             min-height: 60px;
         }
         
-        .effects-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
         
-        .effect-tag {
+        .tag {
             background: var(--accent);
             color: white;
             padding: 8px 14px;
@@ -238,18 +209,9 @@
             gap: 8px;
         }
         
-        .effect-tag .remove {
-            cursor: pointer;
-            opacity: 0.7;
-            font-size: 12px;
-        }
+        .tag .x { cursor: pointer; opacity: 0.7; }
         
-        .empty-state {
-            color: var(--text-dim);
-            font-size: 14px;
-            text-align: center;
-            padding: 10px;
-        }
+        .empty { color: var(--text-dim); text-align: center; padding: 10px; }
     </style>
 </head>
 <body data-theme="dark">
@@ -265,79 +227,71 @@
         <p>Выбери эффекты для видео</p>
     </div>
     
-    <div class="section">
-        <div class="section-title">Эффекты</div>
-        <div class="buttons-grid">
-            <button class="btn" data-effect="blur" onclick="toggleEffect('blur')">
-                <span class="btn-icon">🌫️</span>
-                <span>Блюр</span>
-            </button>
-            <button class="btn" data-effect="shake" onclick="toggleEffect('shake')">
-                <span class="btn-icon">📳</span>
-                <span>Тряска</span>
-            </button>
-            <button class="btn" data-effect="zoom" onclick="toggleEffect('zoom')">
-                <span class="btn-icon">🔍</span>
-                <span>Зум</span>
-            </button>
-            <button class="btn" data-effect="glitch" onclick="toggleEffect('glitch')">
-                <span class="btn-icon">⚡</span>
-                <span>Глитч</span>
-            </button>
-            <button class="btn" data-effect="vhs" onclick="toggleEffect('vhs')">
-                <span class="btn-icon">📼</span>
-                <span>VHS</span>
-            </button>
-            <button class="btn" data-effect="flash" onclick="toggleEffect('flash')">
-                <span class="btn-icon">💥</span>
-                <span>Вспышка</span>
-            </button>
-        </div>
+    <div class="instructions">
+        <div><span class="step">1</span> Сначала отправь видео боту</div>
+        <div><span class="step">2</span> Выбери эффекты ниже</div>
+        <div><span class="step">3</span> Нажми "Применить"</div>
     </div>
     
     <div class="section">
-        <div class="section-title">Цвет</div>
-        <div class="buttons-grid">
-            <button class="btn" data-effect="bw" onclick="toggleEffect('bw')">
-                <span class="btn-icon">⬛</span>
-                <span>Ч/Б</span>
-            </button>
-            <button class="btn" data-effect="sepia" onclick="toggleEffect('sepia')">
-                <span class="btn-icon">🟤</span>
-                <span>Сепия</span>
-            </button>
-            <button class="btn" data-effect="contrast" onclick="toggleEffect('contrast')">
-                <span class="btn-icon">🎨</span>
-                <span>Контраст</span>
-            </button>
-        </div>
-    </div>
-    
-    <div class="section">
-        <div class="section-title">Скорость</div>
+        <div class="section-title">⚡ Скорость</div>
         <div class="speed-control">
             <div class="speed-header">
-                <span class="speed-value" id="speedValue">1x</span>
-                <button class="speed-reset" onclick="resetSpeed()">Сброс</button>
+                <span>Скорость</span>
+                <span class="speed-value" id="speedVal">1x</span>
             </div>
-            <input type="range" class="slider" id="speedSlider" 
-                   min="0.25" max="3" step="0.25" value="1"
-                   oninput="updateSpeed(this.value)">
+            <input type="range" class="slider" id="speedSlider" min="0.25" max="3" step="0.25" value="1" oninput="setSpeed(this.value)">
             <div class="speed-labels">
-                <span>0.25x</span>
-                <span>1x</span>
-                <span>2x</span>
-                <span>3x</span>
+                <span>0.25x</span><span>1x</span><span>2x</span><span>3x</span>
             </div>
         </div>
     </div>
     
     <div class="section">
-        <div class="section-title">Применить</div>
-        <div class="selected-effects">
-            <div class="effects-list" id="effectsList">
-                <div class="empty-state">Выбери эффекты выше ☝️</div>
-            </div>
+        <div class="section-title">🎨 Цвет</div>
+        <div class="buttons-grid">
+            <button class="btn" data-e="bw" onclick="toggle('bw')"><span class="btn-icon">⚫</span>Ч/Б</button>
+            <button class="btn" data-e="sepia" onclick="toggle('sepia')"><span class="btn-icon">🟤</span>Сепия</button>
+            <button class="btn" data-e="negative" onclick="toggle('negative')"><span class="btn-icon">🔄</span>Негатив</button>
+            <button class="btn" data-e="vintage" onclick="toggle('vintage')"><span class="btn-icon">📼</span>Винтаж</button>
+            <button class="btn" data-e="bright" onclick="toggle('bright')"><span class="btn-icon">☀️</span>Яркость+</button>
+            <button class="btn" data-e="contrast" onclick="toggle('contrast')"><span class="btn-icon">🎚️</span>Контраст+</button>
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">🔄 Трансформации</div>
+        <div class="buttons-grid">
+            <button class="btn" data-e="mirror" onclick="toggle('mirror')"><span class="btn-icon">🪞</span>Зеркало</button>
+            <button class="btn" data-e="flip" onclick="toggle('flip')"><span class="btn-icon">🔃</span>Перевернуть</button>
+            <button class="btn" data-e="rotate" onclick="toggle('rotate')"><span class="btn-icon">↩️</span>90°</button>
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">📐 Формат</div>
+        <div class="buttons-grid">
+            <button class="btn" data-e="1:1" onclick="toggle('1:1')"><span class="btn-icon">⬜</span>1:1</button>
+            <button class="btn" data-e="9:16" onclick="toggle('9:16')"><span class="btn-icon">📱</span>9:16</button>
+            <button class="btn" data-e="16:9" onclick="toggle('16:9')"><span class="btn-icon">🖥️</span>16:9</button>
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">✨ Эффекты</div>
+        <div class="buttons-grid">
+            <button class="btn" data-e="reverse" onclick="toggle('reverse')"><span class="btn-icon">⏪</span>Реверс</button>
+            <button class="btn" data-e="blur" onclick="toggle('blur')"><span class="btn-icon">🌫️</span>Размытие</button>
+            <button class="btn" data-e="sharp" onclick="toggle('sharp')"><span class="btn-icon">🔪</span>Резкость</button>
+            <button class="btn" data-e="mute" onclick="toggle('mute')"><span class="btn-icon">🔇</span>Без звука</button>
+            <button class="btn" data-e="gif" onclick="toggle('gif')"><span class="btn-icon">🎞️</span>GIF</button>
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">✅ Выбрано</div>
+        <div class="selected-panel">
+            <div class="tags" id="tags"><div class="empty">Выбери эффекты выше ☝️</div></div>
         </div>
     </div>
     
@@ -346,102 +300,59 @@
         tg.ready();
         tg.expand();
         
-        let selectedEffects = [];
+        let effects = [];
         let speed = 1;
         
-        const effectNames = {
-            blur: '🌫️ Блюр',
-            shake: '📳 Тряска',
-            zoom: '🔍 Зум',
-            glitch: '⚡ Глитч',
-            vhs: '📼 VHS',
-            flash: '💥 Вспышка',
-            bw: '⬛ Ч/Б',
-            sepia: '🟤 Сепия',
-            contrast: '🎨 Контраст'
+        const names = {
+            bw:'⚫ Ч/Б', sepia:'🟤 Сепия', negative:'🔄 Негатив', vintage:'📼 Винтаж',
+            bright:'☀️ Яркость+', contrast:'🎚️ Контраст+', mirror:'🪞 Зеркало',
+            flip:'🔃 Перевернуть', rotate:'↩️ 90°', '1:1':'⬜ 1:1', '9:16':'📱 9:16',
+            '16:9':'🖥️ 16:9', reverse:'⏪ Реверс', blur:'🌫️ Размытие',
+            sharp:'🔪 Резкость', mute:'🔇 Без звука', gif:'🎞️ GIF'
         };
         
-        function setTheme(theme) {
-            document.body.setAttribute('data-theme', theme);
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.set === theme);
-            });
-            localStorage.setItem('reels-theme', theme);
-            tg.HapticFeedback.impactOccurred('light');
+        function setTheme(t) {
+            document.body.setAttribute('data-theme', t);
+            document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.set === t));
+            localStorage.setItem('theme', t);
+            tg.HapticFeedback?.impactOccurred('light');
         }
+        setTheme(localStorage.getItem('theme') || 'dark');
         
-        const savedTheme = localStorage.getItem('reels-theme') || 'dark';
-        setTheme(savedTheme);
-        
-        function toggleEffect(effect) {
-            const btn = document.querySelector(`[data-effect="${effect}"]`);
-            
-            if (selectedEffects.includes(effect)) {
-                selectedEffects = selectedEffects.filter(e => e !== effect);
+        function toggle(e) {
+            const btn = document.querySelector(`[data-e="${e}"]`);
+            if (effects.includes(e)) {
+                effects = effects.filter(x => x !== e);
                 btn.classList.remove('selected');
             } else {
-                selectedEffects.push(effect);
+                effects.push(e);
                 btn.classList.add('selected');
             }
-            
-            updateSelectedList();
-            updateMainButton();
-            tg.HapticFeedback.impactOccurred('light');
+            update();
+            tg.HapticFeedback?.impactOccurred('light');
         }
         
-        function removeEffect(effect) {
-            selectedEffects = selectedEffects.filter(e => e !== effect);
-            document.querySelector(`[data-effect="${effect}"]`)?.classList.remove('selected');
-            updateSelectedList();
-            updateMainButton();
-            tg.HapticFeedback.impactOccurred('light');
+        function remove(e) {
+            effects = effects.filter(x => x !== e);
+            document.querySelector(`[data-e="${e}"]`)?.classList.remove('selected');
+            update();
         }
         
-        function updateSpeed(value) {
-            speed = parseFloat(value);
-            document.getElementById('speedValue').textContent = speed + 'x';
-            updateSelectedList();
-            updateMainButton();
+        function setSpeed(v) {
+            speed = parseFloat(v);
+            document.getElementById('speedVal').textContent = speed + 'x';
+            update();
         }
         
-        function resetSpeed() {
-            speed = 1;
-            document.getElementById('speedSlider').value = 1;
-            document.getElementById('speedValue').textContent = '1x';
-            updateSelectedList();
-            updateMainButton();
-            tg.HapticFeedback.impactOccurred('medium');
-        }
-        
-        function updateSelectedList() {
-            const list = document.getElementById('effectsList');
-            let html = '';
+        function update() {
+            const t = document.getElementById('tags');
+            let h = '';
+            if (speed !== 1) h += `<div class="tag">⏱️ ${speed}x <span class="x" onclick="document.getElementById('speedSlider').value=1;setSpeed(1)">✕</span></div>`;
+            effects.forEach(e => h += `<div class="tag">${names[e]} <span class="x" onclick="remove('${e}')">✕</span></div>`);
+            t.innerHTML = h || '<div class="empty">Выбери эффекты выше ☝️</div>';
             
-            if (selectedEffects.length === 0 && speed === 1) {
-                list.innerHTML = '<div class="empty-state">Выбери эффекты выше ☝️</div>';
-                return;
-            }
-            
-            if (speed !== 1) {
-                html += `<div class="effect-tag">
-                    <span>⏱️ ${speed}x</span>
-                    <span class="remove" onclick="resetSpeed()">✕</span>
-                </div>`;
-            }
-            
-            selectedEffects.forEach(effect => {
-                html += `<div class="effect-tag">
-                    <span>${effectNames[effect]}</span>
-                    <span class="remove" onclick="removeEffect('${effect}')">✕</span>
-                </div>`;
-            });
-            
-            list.innerHTML = html;
-        }
-        
-        function updateMainButton() {
-            if (selectedEffects.length > 0 || speed !== 1) {
-                tg.MainButton.setText('✨ Применить эффекты');
+            if (effects.length || speed !== 1) {
+                tg.MainButton.setText('✨ Применить');
                 tg.MainButton.show();
             } else {
                 tg.MainButton.hide();
@@ -449,12 +360,8 @@
         }
         
         tg.MainButton.onClick(() => {
-            const data = {
-                effects: selectedEffects,
-                speed: speed
-            };
-            tg.sendData(JSON.stringify(data));
-            tg.HapticFeedback.notificationOccurred('success');
+            tg.sendData(JSON.stringify({ effects, speed }));
+            tg.HapticFeedback?.notificationOccurred('success');
         });
     </script>
 </body>
