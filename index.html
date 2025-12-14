@@ -296,73 +296,77 @@
     </div>
     
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        
-        let effects = [];
-        let speed = 1;
-        
-        const names = {
-            bw:'⚫ Ч/Б', sepia:'🟤 Сепия', negative:'🔄 Негатив', vintage:'📼 Винтаж',
-            bright:'☀️ Яркость+', contrast:'🎚️ Контраст+', mirror:'🪞 Зеркало',
-            flip:'🔃 Перевернуть', rotate:'↩️ 90°', '1:1':'⬜ 1:1', '9:16':'📱 9:16',
-            '16:9':'🖥️ 16:9', reverse:'⏪ Реверс', blur:'🌫️ Размытие',
-            sharp:'🔪 Резкость', mute:'🔇 Без звука', gif:'🎞️ GIF'
-        };
-        
-        function setTheme(t) {
-            document.body.setAttribute('data-theme', t);
-            document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.set === t));
-            localStorage.setItem('theme', t);
-            tg.HapticFeedback?.impactOccurred('light');
-        }
-        setTheme(localStorage.getItem('theme') || 'dark');
-        
-        function toggle(e) {
-            const btn = document.querySelector(`[data-e="${e}"]`);
-            if (effects.includes(e)) {
-                effects = effects.filter(x => x !== e);
-                btn.classList.remove('selected');
-            } else {
-                effects.push(e);
-                btn.classList.add('selected');
-            }
-            update();
-            tg.HapticFeedback?.impactOccurred('light');
-        }
-        
-        function remove(e) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    
+    // Проверка инициализации
+    alert("WebApp init: " + (tg.initData ? "OK" : "NO DATA"));
+    
+    let effects = [];
+    let speed = 1;
+    
+    const names = {
+        bw:'Ч/Б', sepia:'Сепия', negative:'Негатив', vintage:'Винтаж',
+        bright:'Яркость+', contrast:'Контраст+', mirror:'Зеркало',
+        flip:'Перевернуть', rotate:'90°', '1:1':'1:1', '9:16':'9:16',
+        '16:9':'16:9', reverse:'Реверс', blur:'Размытие',
+        sharp:'Резкость', mute:'Без звука', gif:'GIF'
+    };
+    
+    function setTheme(t) {
+        document.body.setAttribute('data-theme', t);
+        document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.set === t));
+        localStorage.setItem('theme', t);
+    }
+    setTheme(localStorage.getItem('theme') || 'dark');
+    
+    function toggle(e) {
+        const btn = document.querySelector(`[data-e="${e}"]`);
+        if (effects.includes(e)) {
             effects = effects.filter(x => x !== e);
-            document.querySelector(`[data-e="${e}"]`)?.classList.remove('selected');
-            update();
+            btn.classList.remove('selected');
+        } else {
+            effects.push(e);
+            btn.classList.add('selected');
         }
+        update();
+    }
+    
+    function remove(e) {
+        effects = effects.filter(x => x !== e);
+        document.querySelector(`[data-e="${e}"]`)?.classList.remove('selected');
+        update();
+    }
+    
+    function setSpeed(v) {
+        speed = parseFloat(v);
+        document.getElementById('speedVal').textContent = speed + 'x';
+        update();
+    }
+    
+    function update() {
+        const t = document.getElementById('tags');
+        let h = '';
+        if (speed !== 1) h += `<div class="tag">⏱️ ${speed}x <span class="x" onclick="document.getElementById('speedSlider').value=1;setSpeed(1)">✕</span></div>`;
+        effects.forEach(e => h += `<div class="tag">${names[e]} <span class="x" onclick="remove('${e}')">✕</span></div>`);
+        t.innerHTML = h || '<div class="empty">Выбери эффекты выше</div>';
         
-        function setSpeed(v) {
-            speed = parseFloat(v);
-            document.getElementById('speedVal').textContent = speed + 'x';
-            update();
+        if (effects.length || speed !== 1) {
+            tg.MainButton.setText('Применить');
+            tg.MainButton.show();
+        } else {
+            tg.MainButton.hide();
         }
-        
-        function update() {
-            const t = document.getElementById('tags');
-            let h = '';
-            if (speed !== 1) h += `<div class="tag">⏱️ ${speed}x <span class="x" onclick="document.getElementById('speedSlider').value=1;setSpeed(1)">✕</span></div>`;
-            effects.forEach(e => h += `<div class="tag">${names[e]} <span class="x" onclick="remove('${e}')">✕</span></div>`);
-            t.innerHTML = h || '<div class="empty">Выбери эффекты выше ☝️</div>';
-            
-            if (effects.length || speed !== 1) {
-                tg.MainButton.setText('✨ Применить');
-                tg.MainButton.show();
-            } else {
-                tg.MainButton.hide();
-            }
-        }
-        
-        tg.MainButton.onClick(() => {
-            tg.sendData(JSON.stringify({ effects, speed }));
-            tg.HapticFeedback?.notificationOccurred('success');
-        });
-    </script>
+    }
+    
+    tg.MainButton.onClick(function() {
+        alert("Button clicked!");
+        const data = JSON.stringify({ effects: effects, speed: speed });
+        alert("Sending: " + data);
+        tg.sendData(data);
+    });
+</script>
+
 </body>
 </html>
